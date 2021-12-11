@@ -1,0 +1,70 @@
+@font-face {
+    font-family: 'whyte regular';
+    src: url('./assets/fonts/Whyte-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'whyte bold';
+    src: url('./assets/fonts/Whyte-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'whyte book';
+    src: url('./assets/fonts/Whyte-Book.ttf');
+}
+
+body {
+    width: 100%;
+}
+
+:root {
+    --dark: #282728;
+    --purple: #9F49F4;
+    --violet: #722af4;
+    --green: #33f37c;
+    --grey: #AEA9B3;
+    --grey2: #8d8c8d;
+    --grey3: #4E4D50;
+}
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+.widget {
+    margin: calc(50px + 0.75vw) 0;
+    width: 350px;
+    height: 600px;
+}
+
+@media (max-width: 700px) {
+    .widget {
+        width: 290px;
+        height: 450px;
+    }
+}
+
+.join-marquee {
+    font-family: 'whyte regular';
+    font-size: 22px;
+    background-color: #7289da;
+    color: white;
+    padding: 12px;
+    width: 100vw;
+}
+
+.join-marquee > span {
+    padding: 15px;
+    position: relative;
+    left: -281px;
+    animation: animate-marquee 2000ms infinite linear;
+}
+
+@keyframes animate-marquee {
+    to {
+        left: 0;
+    }
+}
