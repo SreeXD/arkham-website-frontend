@@ -8,6 +8,23 @@ import controlLeft from '../../assets/media/left.png';
 import controlRight from '../../assets/media/right.png';
 
 const Gallery = ({ type }) => {
+    const onResize = () => setDims({ width: window.innerWidth, height: window.innerHeight });
+    const onScroll = (e) => {
+        if (data.current.completed || data.current.lastDate == data.current.lastDatePrev)
+            return;
+
+        const top = document.documentElement.scrollTop;
+        const tot = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const perc = top / tot;
+
+        if (perc >= 0.9 && !fetching.current) {
+            getImages(data.current.lastDate);
+            data.current.lastDatePrev = data.current.lastDate;
+        }
+    };
+
+    const fetching = useRef(false)
+
     const [state, setState] = useState({
         images: [],
         key: 0
@@ -22,6 +39,8 @@ const Gallery = ({ type }) => {
     });
 
     const getImages = async (date) => {
+        fetching.current = true;
+
         const url = `${window.env.SERVER}/image/get30`;
         const res = await axios.get(url, {
             params: {
@@ -60,24 +79,12 @@ const Gallery = ({ type }) => {
 
         if (state.images.length) 
             data.current.lastDate = res.data.images.at(-1).date;
+
+        fetching.current = false 
+        onScroll()
     };
 
     useEffect(() => {
-        const onResize = () => setDims({ width: window.innerWidth, height: window.innerHeight });
-        const onScroll = (e) => {
-            if (data.current.completed || data.current.lastDate == data.current.lastDatePrev)
-                return;
-
-            const top = document.documentElement.scrollTop;
-            const tot = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const perc = top / tot;
-
-            if (perc >= 0.9) {
-                getImages(data.current.lastDate);
-                data.current.lastDatePrev = data.current.lastDate;
-            }
-        };
-
         window.addEventListener('resize', onResize);
         window.addEventListener('scroll', onScroll);
         

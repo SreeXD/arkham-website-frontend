@@ -23,6 +23,7 @@ export const SectionVideo = styled.video`
     position: fixed;
     opacity: 0;
     height: auto;
+    max-height: calc(100vh - 20px);
     
     @media (max-width: 900px) {
         right: calc(20px + 8vw);
