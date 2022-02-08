@@ -10,14 +10,12 @@ import controlRight from '../../assets/media/right.png';
 const Gallery = ({ type }) => {
     const onResize = () => setDims({ width: window.innerWidth, height: window.innerHeight });
     const onScroll = (e) => {
-        if (data.current.completed || data.current.lastDate == data.current.lastDatePrev)
+        if (data.current.completed || data.current.lastDate == data.current.lastDatePrev || fetching.current)
             return;
 
-        const top = document.documentElement.scrollTop;
-        const tot = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const perc = top / tot;
+        const bottom = document.documentElement.scrollHeight - document.documentElement.scrollTop - document.documentElement.clientHeight
 
-        if (perc >= 0.9 && !fetching.current) {
+        if (bottom <= 40) {
             getImages(data.current.lastDate);
             data.current.lastDatePrev = data.current.lastDate;
         }
@@ -58,20 +56,24 @@ const Gallery = ({ type }) => {
             const img = res.data.images[i];
 
             if (!(img.userId in map)) {
-                const aUrl = `${window.env.SERVER}/image/author/${img.userId}`;
-                const res2 = await axios.get(aUrl);
-                map[img.userId] = { 
-                    av: `https://cdn.discordapp.com/avatars/${img.userId}/${res2.data.avatar}`,
-                    user: res2.data.username 
-                };
+                try {
+                    const res2 = await axios.get(`${window.env.SERVER}/image/author/${img.userId}`);
+
+                    map[img.userId] = { 
+                        av: `https://cdn.discordapp.com/avatars/${img.userId}/${res2.data.avatar}`,
+                        user: res2.data.username 
+                    };
+                }
+
+                catch (error) { }
             }
 
             state.images.push({
                 src: `${window.env.SERVER}/image/get/${img.filename}.${img.extension}`,
                 width: img.width,
                 height: img.height,
-                av: map[img.userId].av,
-                user: map[img.userId].user
+                av: map[img.userId]?.av,
+                user: map[img.userId]?.user ?? 'unknown user'
             });
             
             setState({ ...state });
